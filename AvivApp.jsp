@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stylish JSP App</title>
+    <title>Aviv JSP App</title>
     <style>
         body {
             font-family: Arial, sans-serif;
