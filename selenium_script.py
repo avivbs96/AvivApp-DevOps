@@ -1,12 +1,14 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException
 import time
 
 
 try:
-    # Initialize the driver
-    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver')
+    # Initialize the driver using Service object
+    service = Service('/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(service=service)
     print("Driver initialized.")
 
     # Navigate to the page
@@ -21,7 +23,7 @@ try:
 
     # Verification 2: Check GitHub Button
     try:
-        button = driver.find_element_by_tag_name("button")
+        button = driver.find_element(By.TAG_NAME, "button")
         if "Go to Git Hub" in button.text:
             print("Verification 2: GitHub button check passed.")
         else:
@@ -31,7 +33,7 @@ try:
 
     # Verification 3: Check Header
     try:
-        header = driver.find_element_by_tag_name("h1")
+        header = driver.find_element(By.TAG_NAME, "h1")
         if "Welcome to Aviv Ben Shitrit Git Hub Page!" == header.text:
             print("Verification 3: Header check passed.")
         else:
@@ -43,8 +45,8 @@ except Exception as e:
     print(f"An error occurred: {e}")
 
 finally:
-    # Close the browser
-    time.sleep(20)
+    time.sleep(10)
 
+    # Close the browser
     driver.quit()
     print("Browser closed.")
