@@ -2,10 +2,13 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.chrome.service import Service
+
 
 @pytest.fixture(scope="module")
 def setup_driver():
-    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver')
+    service = Service(executable_path='/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(service=service)
     yield driver
     driver.quit()
 
@@ -18,7 +21,7 @@ def test_title(setup_driver):
 def test_github_button(setup_driver):
     driver = setup_driver
     try:
-        button = driver.find_element_by_tag_name("button")
+        button = driver.find_element(By.TAG_NAME, "button")
         assert "Go to Git Hub" in button.text
         print("Verification 2: GitHub button check passed.")
     except NoSuchElementException:
