@@ -1,12 +1,16 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 import time
+
 time.sleep(20)
 
 try:
     # Initialize the driver
-    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver')
+    service = Service(executable_path='/usr/local/bin/chromedriver')
+    driver = webdriver.Chrome(service=service)
 
     # Navigate to the page
     driver.get("http://localhost:8081/Aviv-tomcat/AvivApp.jsp")
@@ -16,14 +20,14 @@ try:
 
     # Verification 2: Check GitHub Button
     try:
-        button = driver.find_element_by_tag_name("button")
+        button = driver.find_element(By.TAG_NAME, "button")
         assert "Go to Git Hub" in button.text
     except NoSuchElementException:
         print("Button not found")
 
     # Verification 3: Check Header
     try:
-        header = driver.find_element_by_tag_name("h1")
+        header = driver.find_element(By.TAG_NAME, "h1")
         assert "Welcome to Aviv Ben Shitrit Git Hub Page!" == header.text
     except NoSuchElementException:
         print("Header not found")
@@ -34,5 +38,3 @@ except Exception as e:
 finally:
     # Close the browser
     driver.quit()
-
-
