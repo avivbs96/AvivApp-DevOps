@@ -39,7 +39,7 @@
 <body>
     <div class="container">
         <h1>Welcome to Aviv Ben Shitrit Git Hub Page!</h1>
-        <button><a href="https://github.com/avivbs96">Go to Git Hub</a></button>
+        <button><a href="https://github.com/avivbs96/AvivApp-DevOps">Go to Git Hub</a></button>
     </div>
 </body>
 </html>
