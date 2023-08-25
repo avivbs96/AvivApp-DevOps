@@ -92,10 +92,17 @@ public class ComputerDatabaseStressTest extends Simulation {
     ScenarioBuilder users = scenario("Users").exec(search, browse);
     ScenarioBuilder admins = scenario("Admins").exec(search, browse, edit);
 
-    {
-        setUp(
-            users.injectOpen(rampUsers(10).during(10)),
-            admins.injectOpen(rampUsers(2).during(10))
-        ).protocols(httpProtocol);
+   {
+    setUp(
+        users.inject(
+            rampUsers(70) .during(20.seconds()),  // Ramp up to 70 users over 20 seconds
+            constantUsersPerSec(70).during(100.seconds())  // Keep the load of 70 users constant for 100 seconds
+        ),
+        admins.inject(
+            rampUsers(70) .during(20.seconds()),  // Ramp up to 70 admin users over 20 seconds
+            constantUsersPerSec(70).during(100.seconds())  // Keep the load of 70 admin users constant for 100 seconds
+        )
+    ).protocols(httpProtocol);
     }
+
 }
