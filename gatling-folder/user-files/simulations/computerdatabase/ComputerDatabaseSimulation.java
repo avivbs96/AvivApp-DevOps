@@ -8,13 +8,6 @@ import io.gatling.javaapi.http.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * This sample is based on our official tutorials:
- * <ul>
- *   <li><a href="https://gatling.io/docs/gatling/tutorials/quickstart">Gatling quickstart tutorial</a>
- *   <li><a href="https://gatling.io/docs/gatling/tutorials/advanced">Gatling advanced tutorial</a>
- * </ul>
- */
 public class ComputerDatabaseSimulation extends Simulation {
 
     HttpProtocolBuilder httpProtocol =
@@ -47,9 +40,7 @@ public class ComputerDatabaseSimulation extends Simulation {
             )
             .pause(1);
 
-    // Repeat is a loop resolved at RUNTIME
     ChainBuilder browse =
-        // Note how we force the counter name, so we can reuse it
         repeat(4, "i").on(
             exec(
                 http("Page #{i}")
@@ -57,11 +48,7 @@ public class ComputerDatabaseSimulation extends Simulation {
             ).pause(1)
         );
 
-    // Note we should be using a feeder here
-    // Let's demonstrate how we can retry: let's make the request fail randomly and retry a given
-    // number of times
     ChainBuilder edit =
-        // Let's try at max 2 times
         tryMax(2)
             .on(
                 exec(
@@ -78,24 +65,31 @@ public class ComputerDatabaseSimulation extends Simulation {
                             .formParam("company", "37")
                             .check(
                                 status().is(
-                                    // We do a check on a condition that's been customized with
-                                    // a lambda. It will be evaluated every time a user executes
-                                    // the request.
                                     session -> 200 + ThreadLocalRandom.current().nextInt(2)
                                 )
                             )
                     )
             )
-            // If the chain didn't finally succeed, have the user exit the whole scenario
             .exitHereIfFailed();
 
     ScenarioBuilder users = scenario("Users").exec(search, browse);
     ScenarioBuilder admins = scenario("Admins").exec(search, browse, edit);
 
+    // Stress Test Scenario
+    ScenarioBuilder stressTest = scenario("Stress Test")
+        .exec(http("Stress Home")
+            .get("/"))
+        .pause(1)
+        .exec(http("Stress Search")
+            .get("/computers"))
+        .pause(1);
+
     {
         setUp(
             users.injectOpen(rampUsers(10).during(10)),
-            admins.injectOpen(rampUsers(2).during(10))
+            admins.injectOpen(rampUsers(2).during(10)),
+            // New stress test setup
+            stressTest.injectOpen(rampUsers(70).during(120))
         ).protocols(httpProtocol);
     }
 }
