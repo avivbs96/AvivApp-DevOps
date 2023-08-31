@@ -9,7 +9,7 @@ from browsermobproxy import Server
 
 @pytest.fixture(scope="module")
 def setup_proxy():
-    server = Server()
+    server = Server("/Users/Aviv/Downloads/browsermob-proxy-2.1.4/bin/browsermob-proxy")
     server.start()
     proxy = server.create_proxy()
     yield proxy
